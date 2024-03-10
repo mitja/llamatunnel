@@ -1,3 +1,3 @@
 # Llama Tunnel
 
-Publish local LLMs and LLM apps on the internet.
+Publish local LLMs and apps on the internet.
