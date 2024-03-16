@@ -190,17 +190,13 @@ In principle, you can publish your local LLM and LLM apps on the internet with t
 
 | Method | Pros | Cons |
 | --- | --- | --- |
-| VPN | Secure, private, and encrypted connection | gives access to your network, you need to open the tunnel to use the services |
-| Dynamic DNS | Easy to set up, no need for a VPN | you need to open the tunnel to use the services, not as secure, could be blocked by your internet service provider |
-| Outbound tunnel to a reverse proxy service on the internet | no need to open ports on your home network, can be shared with friends without sharing complete VPN access to your network, you can authenticate/authorize outside of your network | you need a service on the internet |
+| VPN with Dynamic DNS | Secure, private, and encrypted connection | gives access to your network, you need to open the tunnel to use the services |
+| Open ports with Dynamic DNS | Easy to set up, no need for a VPN | you need to open ports on your router, needs additional security measures in your network, could be blocked by your internet service provider |
+| Outbound tunnel to a gateway service on the internet | no need to open ports on your home network, can be shared with friends without handing out VPN access to your network, you can authenticate/authorize outside of your network | you need a service on the internet |
 
-An outbound tunnel is probably the best compromise of security, convenience of use, and shareability.
+An outbound tunnel is a great compromise between security, convenience, and shareability.
 
 [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) is just one of many services you can use for outbound tunnels. The benefit is that it's free if you already have a domain you can use for this. The main drawbacks of Cloudflare Tunnels are the complex setup, and some limitations of the service. Also, it would be more secure to perform pre-authentication of API clients and users outside of your network. Cloudflare supports this with the Zero Trust Access service, but this can get quite expensive.
-
-### Where Can I find a more Detailed Description?
-
-For a more in-dept description of how this works, check out my blog post.
 
 ### Why Do You Install cloudflared as CLI Tool?
 
@@ -234,7 +230,7 @@ I use Visual Studio Code with the [Caddyfile Support](https://marketplace.visual
 
 ### Can I Publish the Services Deeper Level Subdomain like ollama.home.example.com?
 
-This is not possible with the free Cloudflare account. If you want to proxy a wildcard DNS record on a deeper level like `*.local.example.com` you can subscribe to [Cloudflare Advanced Certificate Manager](https://developers.cloudflare.com/ssl/edge-certificates/advanced-certificate-manager/). For more information, see the Cloudflare Blog post [Wildcard proxy for everyone](https://blog.cloudflare.com/wildcard-proxy-for-everyone) by Hannes Gerhart.
+If you want to proxy a wildcard DNS record on a deeper level like `*.local.example.com` you can subscribe to [Cloudflare Advanced Certificate Manager](https://developers.cloudflare.com/ssl/edge-certificates/advanced-certificate-manager/). For more information, see the Cloudflare Blog post [Wildcard proxy for everyone](https://blog.cloudflare.com/wildcard-proxy-for-everyone) by Hannes Gerhart.
 
 ### How Can I Add Monitoring and Logging?
 
@@ -250,11 +246,15 @@ You can also use the Cloudflare Tunnel logs to monitor the tunnel and the DNS ro
 
 ### Why Don't You Use DNSSEC?
 
-I don't use DNSSEC in this setup because I want to use the same domain name for local and public access with a local DNS server that resolves the domain to the local IP address. While this is possible to implement with DNSSEC, I have not tried it and I believe it is also quite hard to do. If you don't want to use the services locally with the same domain name, you can probably activate DNSSEC on your domain. If you do, I would like to hear about your experience, as I haven't tried it yet.
+I don't use DNSSEC in this setup because I want to use the same domain name for local and public access with a local DNS server that resolves the domain to the local IP address. While this is possible to implement with DNSSEC, I have not tried it and I believe it is also quite hard to do.
+
+If you don't want to use the services locally with the same domain name, you can probably activate DNSSEC on your domain. If you do, I would like to hear about your experience, as I haven't tried it yet.
 
 ### Can I Control the Geographic Region of the Cloudflare Tunnel?
 
-While you can theoretically use the `--region` option to specify the region to which the tunnel connects, the only available value is `us` which routes all connections through data centers in the United States. Omit or leave the option empty to connect to the global region. So in effect, you cannot control in which region to run the tunnels, except for the global or the us region.
+While you can theoretically use the `--region` option to specify the region to which the tunnel connects, the only available value is `us` which routes all connections through data centers in the United States. 
+
+When you omit this option or leave it empty you connect to the global region. So in effect, you cannot control in which region to run the tunnels, except for the global region or the us region.
 
 Reference: [Cloudflare Tunnel Run Parameters](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/configure-tunnels/tunnel-run-parameters/#region)
 
@@ -658,6 +658,10 @@ curl -H "Authorization: Bearer $OLLAMA_API_KEY" --resolve "ollama.$DOMAIN_NAME:4
 ## How Can I Contribute or Give Feedback?
 
 If you have any questions, suggestions, or improvements, feel free to open an issue or a pull request.
+
+## How Can I Raise as Security Issue?
+
+Please follow GitHub's general instructions to [privately report a security vulnerability](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability).
 
 ## License
 
