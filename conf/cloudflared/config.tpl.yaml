@@ -1,0 +1,15 @@
+tunnel: TUNNEL_ID
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  - hostname: 'chat.DOMAIN_NAME'
+    service: https://caddy:443
+    originRequest:
+      originServerName: '*.DOMAIN_NAME'
+      # noTLSVerify: true
+      # disableChunkedEncoding: true
+  - hostname: 'ollama.DOMAIN_NAME'
+    service: https://caddy:443
+    originRequest:
+      originServerName: '*.DOMAIN_NAME'
+  - service: http_status:404 # default service

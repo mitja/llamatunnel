@@ -1,0 +1,35 @@
+version: '3'
+
+networks:
+  web:
+    driver: bridge
+
+services:
+  #--- Caddy ---
+  caddy:
+    build:
+      context: ./images/caddy
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./conf/caddy/simple-response/Caddyfile:/etc/caddy/Caddyfile
+      - ${DATA_DIR-./data}/caddy:/data/caddy
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - DOMAIN_NAME=${DOMAIN_NAME}
+    ports:
+      - "443:443"
+    networks:
+      - web
+  #--- Cloudflared ---
+  cloudflared:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    depends_on:
+      - caddy
+    volumes:
+      - ./conf/cloudflared/config.yaml:/etc/cloudflared/config.yml
+      - ${DATA_DIR-./data}/cloudflared/credentials.json:/etc/cloudflared/credentials.json
+    command: tunnel --config /etc/cloudflared/config.yml run #--loglevel debug run 
+    networks:
+      - web

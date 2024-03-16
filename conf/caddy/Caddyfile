@@ -1,0 +1,31 @@
+*.{$DOMAIN_NAME}:443 {
+  tls {
+    dns cloudflare {$CLOUDFLARE_API_TOKEN}
+    resolvers 1.1.1.1
+  }
+
+  @ollamaValidApiKey {
+    host ollama.{$DOMAIN_NAME}
+    header Authorization "Bearer {$OLLAMA_API_KEY}"
+  }
+
+  @ollama {
+    host ollama.{$DOMAIN_NAME}
+  }
+
+  handle @ollamaValidApiKey {
+    reverse_proxy host.docker.internal:11434
+  }
+
+  handle @ollama {
+    header Content-Type application/json
+	root * /srv
+	rewrite * /401.json
+	file_server
+  }
+
+  @chat host chat.{$DOMAIN_NAME}
+  reverse_proxy @chat open-webui:8080
+
+  log
+}

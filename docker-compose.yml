@@ -1,0 +1,57 @@
+version: '3'
+
+networks:
+  web:
+    driver: bridge
+
+services:
+  #--- OpenWebUI  ---
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    restart: unless-stopped
+    container_name: open-webui
+    environment:
+      - OLLAMA_API_BASE_URL=http://host.docker.internal:11434/api
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
+    volumes:
+      - ${DATA_DIR-./data}/open-webui:/app/backend/data
+    ports:
+      - ${OPEN_WEBUI_PORT-3000}:8080
+    networks:
+      - web
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  #--- Caddy ---
+  caddy:
+    build:
+      context: ./images/caddy
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - open-webui
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - OLLAMA_API_KEY=${OLLAMA_API_KEY}
+    volumes:
+      - ./conf/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./conf/caddy/401.json:/srv/401.json
+      - ${DATA_DIR-./data}/caddy:/data/caddy
+    ports:
+      - "443:443"
+    networks:
+      - web
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  #--- Cloudflared ---
+  cloudflared:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    depends_on:
+      - caddy
+    volumes:
+      - ./conf/cloudflared/config.yaml:/etc/cloudflared/config.yml
+      - ${DATA_DIR-./data}/cloudflared/credentials.json:/etc/cloudflared/credentials.json
+    command: tunnel --config /etc/cloudflared/config.yml run #--loglevel debug run
+    networks:
+      - web
