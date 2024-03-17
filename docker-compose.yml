@@ -32,6 +32,8 @@ services:
     environment:
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
       - DOMAIN_NAME=${DOMAIN_NAME}
+      - API_SUBDOMAIN=${API_SUBDOMAIN}
+      - APP_SUBDOMAIN=${APP_SUBDOMAIN}
       - OLLAMA_API_KEY=${OLLAMA_API_KEY}
     volumes:
       - ./conf/caddy/Caddyfile:/etc/caddy/Caddyfile

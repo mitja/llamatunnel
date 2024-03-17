@@ -4,19 +4,19 @@
 		resolvers 1.1.1.1
 	}
 
-	@chat {
-		host chat.{$DOMAIN_NAME}
+	@app {
+		host {$APP_SUBDOMAIN}.{$DOMAIN_NAME}
 	}
 
-	@ollama {
-		host ollama.{$DOMAIN_NAME}
+	@api {
+		host {$API_SUBDOMAIN}.{$DOMAIN_NAME}
 	}
 
-	handle @chat {
-		respond @chat "hi from chat.{$DOMAIN_NAME}"
+	handle @app {
+		respond @app "hi from {$APP_SUBDOMAIN}.{$DOMAIN_NAME}"
 	}
 
-	handle @ollama {
-		respond @ollama "hi from ollama.{$DOMAIN_NAME}"
+	handle @api {
+		respond @api "hi from {$APP_SUBDOMAIN}.{$DOMAIN_NAME}"
 	}
 }
