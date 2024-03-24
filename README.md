@@ -165,13 +165,33 @@ docker-compose up --build -d
 docker-compose down
 ```
 
-### Update
+### Update or Change the Configuration
 
-Take a backup, gather the existing secret configurations (you can find the in the `.env` file) and then run, and provide the same answers for the secrets, as before if you want to keep them. You can just acknowledge
-the other options.
+You can update the project with copier. This way, you can get new features,
+updated docker images, or bug fixes in the template and you can also
+change the configuration of the services.
+
+1. Change into the project directory.
+2. Stop the services, for example with `docker-compose down`.
+3. Take a backup, for example with `zip -r -X "../llamatunnel.zip" .`
+4. Gather the existing secret configurations (you can find them in the `.env` file).
+5. Run `copier update` in the project directory.
+6. Resolve any conflicts, if necessary.
+7. Commit the changes to git.
+8. Restart the services with `docker-compose up --build -d`.
+
+**Caution**: Make sure to provide the same answers for the secrets, as before
+if you want to keep the secrets. Again, you can find the secrets in the `.env` file.
+
+You can just acknowledge the other, non-secret options if you don't want to change anything.
+
+If you just want to change the configuration, while keeping the current version,
+get the `_commit` value from the `.copier-answers.yml` file, and use it as the
+value of the `--vcs-ref` option. Usually, this is a git tag, in which case you can
+call `copier update` for example like this:
 
 ```bash
-copier update
+copier update --vcs-ref tags/0.1.7
 ```
 
 ## Security Notes
