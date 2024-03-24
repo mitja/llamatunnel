@@ -1,15 +1,15 @@
-tunnel: TUNNEL_ID
+tunnel: {{tunnel_id}}
 credentials-file: /etc/cloudflared/credentials.json
 
 ingress:
-  - hostname: 'APP_SUBDOMAIN.DOMAIN_NAME'
+  - hostname: '{{app_subdomain}}.{{domain_name}}'
     service: https://caddy:443
     originRequest:
-      originServerName: '*.DOMAIN_NAME'
+      originServerName: '*.{{domain_name}}'
       # noTLSVerify: true
       # disableChunkedEncoding: true
-  - hostname: 'API_SUBDOMAIN.DOMAIN_NAME'
+  - hostname: '{{api_subdomain}}.{{domain_name}}'
     service: https://caddy:443
     originRequest:
-      originServerName: '*.DOMAIN_NAME'
+      originServerName: '*.{{domain_name}}'
   - service: http_status:404 # default service

@@ -1,0 +1,38 @@
+# {{project_name}}
+
+This is a Docker Compose stack that publishes OpenWebUI and Ollama on the internet. 
+It has been created with the [llamatunnel](https://github.com/mitja/llamatunnel) 
+[copier](https://copier.readthedocs.io/en/stable/) template.
+
+It is recommended to keep the project in git **excluding** the `.env` file and the data directory.
+
+## Usage
+
+### Start
+
+```bash
+docker-compose up --build -d
+```
+
+### Stop
+
+```bash
+docker-compose down
+```
+
+### Update
+
+Take a backup and then run
+
+```bash
+copier update
+```
+
+## Security Notes
+
+The `.env` file contains secrets, namely the `CLOUDFLARE_API_TOKEN`, the `OLLAMA_API_KEY`, 
+and the `WEBUI_SECRET_KEY`. Don't commit the `.env` file to version control and store the secrets 
+somewhere secure, so that you can enter them again on updates or reinstalls. 
+
+The `data` directory contains secrets, for example the `credentials.json` file and the private key
+of the TLS certificate. Take backups of the data directory, and don't commit it to version control.

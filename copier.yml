@@ -1,0 +1,69 @@
+# questions
+project_name:
+    type: str
+    help: What is your project name?
+    default: llamatunnel
+
+data_dir:
+    type: str
+    help: Where should the data be stored?
+    default: ./data
+
+domain_name:
+    type: str
+    help: What is your domain name?
+
+api_subdomain:
+    type: str
+    help: What is your API subdomain?
+    default: api
+
+app_subdomain:
+    type: str
+    help: What is your app subdomain?
+    default: app
+
+cloudflare_api_token:
+    type: str
+    secret: true
+    default: ""
+    help: What is your Cloudflare API token for the DNS service?
+
+tunnel_name:
+    type: str
+    help: What is your Cloudflare Tunnel name?
+    default: llamatunnel
+
+tunnel_id:
+    type: str
+    help: What is your Cloudflare Tunnel ID?
+
+ollama_api_key:
+    type: str
+    help: What is your Ollama API key?
+    default: "{{ 999999999999999999999999999999999|ans_random|hash('sha256')|urlencode }}"
+
+webui_port:
+    type: int
+    help: On which port shall OpenWebUI listen?
+    default: 3200
+
+webui_secret_key:
+    type: str
+    help: What is the secret key for the OpenWebUI?
+    default: "{{ 999999999999999999999999999999999|ans_random|hash('sha256')|urlencode }}"
+
+# configurations
+_exclude:
+  - docs
+  - README.md
+  - .gitignore
+  - LICENSE
+  - copier.yaml
+  - copier.yml
+  - ~*
+  - "*.py[co]"
+  - __pycache__
+  - .git
+  - .DS_Store
+  - .svn"

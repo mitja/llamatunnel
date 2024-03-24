@@ -16,7 +16,7 @@ services:
     volumes:
       - ${DATA_DIR-./data}/open-webui:/app/backend/data
     ports:
-      - ${OPEN_WEBUI_PORT-3000}:8080
+      - ${WEBUI_PORT-3000}:8080
     networks:
       - web
     extra_hosts:
