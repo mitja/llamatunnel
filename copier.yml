@@ -1,8 +1,4 @@
 # questions
-project_name:
-    type: str
-    help: What is your project name?
-    default: llamatunnel
 
 data_dir:
     type: str
@@ -11,23 +7,23 @@ data_dir:
 
 domain_name:
     type: str
-    help: What is your domain name?
+    help: On which domain do you want to publish the services?
 
 api_subdomain:
     type: str
-    help: What is your API subdomain?
+    help: What is the API subdomain?
     default: api
 
 app_subdomain:
     type: str
-    help: What is your app subdomain?
+    help: What is the app subdomain?
     default: app
 
 cloudflare_api_token:
     type: str
     secret: true
     default: ""
-    help: What is your Cloudflare API token for the DNS service?
+    help: Provide a Cloudflare API token with permission to configure the domain in the DNS service?
 
 tunnel_name:
     type: str

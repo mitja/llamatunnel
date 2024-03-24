@@ -140,6 +140,25 @@ docker-compose up -d --build
 
 Now you can use Ollama at `https://api.example.com` and OpenWebUI `https://app.example.com` (assuming you use app and api as subdomains). You can find the API key for Ollama in the `.env` file.
 
+It is best practice to commit the project to git. In fact, this is even required, 
+if you want to use the update feature. You can do this with the following commands:
+
+Create a `.gitignore` file with the following content:
+
+```
+data/*
+!data/.gitkeep
+.env
+```
+
+Then initialize a git repository and commit the files:
+
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+```
+
 ## Security Notes
 
 The `.env` file contains secrets, namely the `CLOUDFLARE_API_TOKEN`, the `OLLAMA_API_KEY`,
