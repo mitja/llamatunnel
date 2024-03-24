@@ -90,6 +90,12 @@ mkdir -p $STACK_DIR
 cd $STACK_DIR
 ```
 
+### Create a Data Directory for cloudflared
+
+```bash
+mkdir -p ./data/cloudflared
+```
+
 ### Create a Tunnel and DNS Routes
 
 Create a tunnel and DNS routes for the services. `cloudflared tunnel create` returns a tunnel id. Please note it as you will need it later. This assumes, you keep the data directory at the default location which is `./data` in the project directory. If you want to change location of the data directory, you need to create the directory structure and adjust the path accordingly.
@@ -122,7 +128,7 @@ Note that you cannot manage this tunnel on the Cloudflare Dashboard. Instead, yo
 
 ### Create the Project from the Template
 
-Create the project from the template with copier and answer the questions. If you forgot the tunnel id, you can find it in the `credentials.json` file or with `cloudflared tunnel list`.
+Create the project from the template with copier and answer the questions. If you forgot the tunnel id, you can find it in the `data/cloudflared/credentials.json` file or see it with `cloudflared tunnel list`.
 
 ```bash
 copier copy gh:mitja/llamatunnel .

@@ -92,3 +92,4 @@ _exclude:
   - .git
   - .DS_Store
   - .svn"
+  - data
