@@ -21,8 +21,8 @@ To learn how to set up the stack, please read the [Installation](#installation) 
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - [Ollama](https://ollama.com) installed on your machine and running on http://localhost:11434
-- a [Cloudflare](https://www.cloudflare.com/) account
-- a domain mangaged with Cloudflare DNS
+- A [Cloudflare](https://www.cloudflare.com/) account.
+- A domain mangaged with Cloudflare DNS.
 - [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) installed on your machine. You can install it with `brew install cloudflare/cloudflare/cloudflared` on macOS or `winget install --id Cloudflare.cloudflared` on Windows. For linux, use the package manager of your distribution.
 - [Python](https://www.python.org/downloads/) 3.8 or newer
 - [Git](https://git-scm.com) 2.27 or newer
