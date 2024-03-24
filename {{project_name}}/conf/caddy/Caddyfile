@@ -14,7 +14,7 @@
 	}
 
 	handle @apiValidApiKey {
-		reverse_proxy host.docker.internal:11434
+		reverse_proxy {$OLLAMA_URL}
 	}
 
 	handle @api {
@@ -25,7 +25,7 @@
 	}
 
 	@app host {$APP_SUBDOMAIN}.{$DOMAIN_NAME}
-	reverse_proxy @app open-webui:8080
+	reverse_proxy @app {$WEBUI_SERVICE_NAME}:8080
 
 	log
 }

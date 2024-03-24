@@ -41,17 +41,49 @@ tunnel_id:
 ollama_api_key:
     type: str
     help: What is your Ollama API key?
+    secret: true
     default: "{{ 999999999999999999999999999999999|ans_random|hash('sha256')|urlencode }}"
+
+ollama_url:
+    type: str
+    help: What is the local URL of the Ollama API?
+    default: "host.docker.internal:11434"
+
+cloudflared_service_name:
+    type: str
+    help: What is the name of the Cloudflared service?
+    default: cloudflared
+
+caddy_service_name:
+    type: str
+    help: What is the name of the Caddy service?
+    default: caddy
+
+webui_service_name:
+    type: str
+    help: What is the name of the OpenWebUI service?
+    default: openwebui
 
 webui_port:
     type: int
-    help: On which port shall OpenWebUI listen?
+    help: On which port shall OpenWebUI listen (0 means openwebui is not exposed, directly)?
     default: 3200
 
 webui_secret_key:
     type: str
     help: What is the secret key for the OpenWebUI?
+    secret: true
     default: "{{ 999999999999999999999999999999999|ans_random|hash('sha256')|urlencode }}"
+
+publish_locally:
+    type: bool
+    help: Do you want to publish the tunnel locally on port 443?
+    default: true
+
+network_name:
+    type: str
+    help: What is the name of the docker network?
+    default: llamatunnel
 
 # configurations
 _exclude:
@@ -67,3 +99,8 @@ _exclude:
   - .git
   - .DS_Store
   - .svn"
+
+_migrations:
+  - version: "0.1"
+    after:
+      - echo "The Ollama API key is {{ollama_api_key}}"
