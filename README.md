@@ -177,7 +177,7 @@ change the configuration of the services.
 4. Gather the existing secret configurations (you can find them in the `.env` file).
 5. Run `copier update` in the project directory.
 6. Resolve any conflicts, if necessary.
-7. Commit the changes to git.
+7. Review the changes with `git diff` and commit them with `git commit -am "Update"`.
 8. Restart the services with `docker-compose up --build -d`.
 
 **Caution**: Make sure to provide the same answers for the secrets, as before
