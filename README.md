@@ -6,9 +6,9 @@ With Llama Tunnel, you can publish your local LLM APIs and apps on the internet 
 
 The services are also published locally with TLS certificates for the same domain name. When you configure a local DNS server to resolve the domain name to the local IP address of the machine running the services, you can use the services at home within your local network without changing the domain name.
 
-## Get Started with Cloudflare Tunnels
+## Get Started
 
-Prerequisites are:
+### Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - [Ollama](https://ollama.com) installed on your machine and running on http://localhost:11434
@@ -28,15 +28,21 @@ Invoke-RestMethod -Uri "https://get.scoop.sh" | Invoke-Expression
 scoop install pipx
 ```
 
+### Create a Cloudflare API Token
+
 Create a Cloudflare API token with the permissions to modify the DNS zone. This is needed for the Caddy DNS challenge. Go to the Cloudflare dashboard and create a token as follows:
 
 `My Profile` > `API Tokens` > `Create Token` > `Edit Zone DNS` > `Zone:DNS:Edit` > `Include:Specific Zone:<DOMAIN_NAME>` > `Continue to Summary` > `Create Token`
+
+### Login with cloudflared on Your Local Machine
 
 On you local machine, login with cloudflared:
 
 ```bash
 cloudflared tunnel login
 ```
+
+### Create a Tunnel and DNS Routes
 
 Create a tunnel and DNS routes for the services. `cloudflared tunnel create` returns a tunnel id. Please note it as you will need it later.
 
@@ -66,6 +72,8 @@ cloudflared tunnel route dns $TUNNEL_NAME $APP_SUBDOMAIN.$DOMAIN_NAME
 
 Note that you cannot manage this tunnel on the Cloudflare Dashboard but need to use the `cloudflared` CLI tool to manage the tunnel and the DNS routing, otherwise you won't get the `credentials.json` file which is required to authenticate the `cloudflared` service.
 
+### Create the Project from the Template
+
 Create the project from the template with copier and answer the questions. If you forgot the tunnel id, you can find it in the `credentials.json` file or with `cloudflared tunnel list`.
 
 macOS and Linux:
@@ -84,7 +92,9 @@ copier gh:mitja/llamatunnel $DOCKER_STACKS_DIR
 
 This will create a new directory in the `DOCKER_STACKS_DIR` with the all the files necessary to run the tunnel.
 
-Create data directory for cloudflared and copy the credentials file to this data directory. The following example assumes that you have left the data directory at the default location which is `./data` in the project directory. If you have changed the location of the data directory, you need to adjust the path accordingly.
+### Copy the Credentials File to the Data Directory
+
+Create a data directory for cloudflared and copy the credentials file to this data directory. The following example assumes that you have left the data directory at the default location which is `./data` in the project directory. If you have changed the location of the data directory, you need to adjust the path accordingly.
 
 macOS and Linux:
 
@@ -99,12 +109,14 @@ cp credentials.json $DATA_DIR/cloudflared/credentials.json
 Windows:
 
 ```powershell
-DOCKER_STACKS_DIR="$HOME\docker-stacks"
-PROJECT_NAME="testtunnel"
-DATA_DIR="$DOCKER_STACKS_DIR\$PROJECT_NAME\data"
+$DOCKER_STACKS_DIR="$HOME\docker-stacks"
+$PROJECT_NAME="testtunnel"
+$DATA_DIR="$DOCKER_STACKS_DIR\$PROJECT_NAME\data"
 mkdir -p $DATA_DIR\cloudflared
 cp credentials.json $DATA_DIR\cloudflared\credentials.json
 ```
+
+### Start the Services
 
 Change into the project directory and start the services:
 
@@ -120,8 +132,8 @@ docker-compose up -d --build
 Windows:
 
 ```bash
-DOCKER_STACKS_DIR="$HOME\docker-stacks"
-PROJECT_NAME="llamatunnel"
+$DOCKER_STACKS_DIR="$HOME\docker-stacks"
+$PROJECT_NAME="llamatunnel"
 cd $DOCKER_STACKS_DIR\$PROJECT_NAME
 docker-compose up -d --build
 ```
