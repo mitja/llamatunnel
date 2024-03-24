@@ -1,12 +1,21 @@
 # Llama Tunnel
 
-## Publish Local LLMs and Apps on the Internet
+**Publish Local LLMs and Apps on the Internet.**
 
 With Llama Tunnel, you can publish your local LLM APIs and apps on the internet so that you can use your local LLMs and LLM apps on the go and share them with friends.
 
 The services are also published locally with TLS certificates for the same domain name. When you configure a local DNS server to resolve the domain name to the local IP address of the machine running the services, you can use the services at home within your local network without changing the domain name.
 
-## Get Started
+**It's a Docker Compose Stack.**
+
+If you don't see a `copier.yml` here, then this is the actual Docker Compose stack that
+publishes your local LLM services on the internet. This project was
+created with the [llamatunnel](https://github.com/mitja/llamatunnel)
+[copier](https://copier.readthedocs.io/en/stable/) template.
+
+To learn how to set up the stack, please read the [Installation](#installation) section below.
+
+## Installation
 
 ### Prerequisites
 
@@ -17,16 +26,35 @@ The services are also published locally with TLS certificates for the same domai
 - [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) installed on your machine. You can install it with `brew install cloudflare/cloudflare/cloudflared` on macOS or `winget install --id Cloudflare.cloudflared` on Windows. For linux, use the package manager of your distribution.
 - [Python](https://www.python.org/downloads/) 3.8 or newer
 - [Git](https://git-scm.com) 2.27 or newer
-- [pipx](ttps://github.com/pypa/pipx) - a package manager for Python tools, also installable with `brew install pipx` on macOS. On Windows, you can install it with Scoop (see below).
-- [copier](https://copier.readthedocs.io/en/stable/) (you can install it with `pipx install copier`) - a tool to start projects based on templates
 
-Install Scoop and pipx on Windows:
+### Install Copier
+
+On Linux:
+
+```bash
+python3 -m pip install --user pipx
+python3 -m pipx ensurepath
+pipx install copier
+```
+
+On macOS:
+
+```bash
+brew install pipx
+pipx install copier
+```
+
+On Windows:
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -scope CurrentUser
 Invoke-RestMethod -Uri "https://get.scoop.sh" | Invoke-Expression
 scoop install pipx
+pipx install copier
 ```
+
+Note that you probably need to start another terminal after installing
+pipx to make the `pipx` command available.
 
 ### Create a Cloudflare API Token
 
@@ -42,9 +70,29 @@ On you local machine, login with cloudflared:
 cloudflared tunnel login
 ```
 
+### Create a Folder for the Docker Stack
+
+If you keep all you docker stacks in a directory like `$HOME/docker-stacks`, you can use the following commands to create the Llama Tunnel stack in a new sub-directory.
+
+macOS and Linux:
+
+```bash
+STACK_DIR="$HOME/docker-stacks/llamatunnel"
+mkdir -p $STACK_DIR
+cd $STACK_DIR
+```
+
+Windows:
+
+```powershell
+$STACK_DIR="$HOME\docker-stacks\llamatunnel"
+mkdir -p $STACK_DIR
+cd $STACK_DIR
+```
+
 ### Create a Tunnel and DNS Routes
 
-Create a tunnel and DNS routes for the services. `cloudflared tunnel create` returns a tunnel id. Please note it as you will need it later.
+Create a tunnel and DNS routes for the services. `cloudflared tunnel create` returns a tunnel id. Please note it as you will need it later. This assumes, you keep the data directory at the default location which is `./data` in the project directory. If you want to change location of the data directory, you need to create the directory structure and adjust the path accordingly.
 
 macOS and Linux:
 
@@ -53,7 +101,7 @@ TUNNEL_NAME="llamatunnel"
 DOMAIN_NAME="example.com"
 API_SUBDOMAIN="api"
 APP_SUBDOMAIN="app"
-cloudflared tunnel create --credentials-file credentials.json $TUNNEL_NAME
+cloudflared tunnel create --credentials-file ./data/cloudflared/credentials.json $TUNNEL_NAME
 cloudflared tunnel route dns $TUNNEL_NAME $API_SUBDOMAIN.$DOMAIN_NAME
 cloudflared tunnel route dns $TUNNEL_NAME $APP_SUBDOMAIN.$DOMAIN_NAME
 ```
@@ -65,98 +113,65 @@ $TUNNEL_NAME="llamatunnel"
 $DOMAIN_NAME="example.com"
 $API_SUBDOMAIN="api"
 $APP_SUBDOMAIN="app"
-cloudflared tunnel create --credentials-file credentials.json $TUNNEL_NAME
+cloudflared tunnel create --credentials-file .\data\cloudflared\credentials.json $TUNNEL_NAME
 cloudflared tunnel route dns $TUNNEL_NAME $API_SUBDOMAIN.$DOMAIN_NAME
 cloudflared tunnel route dns $TUNNEL_NAME $APP_SUBDOMAIN.$DOMAIN_NAME
 ```
 
-Note that you cannot manage this tunnel on the Cloudflare Dashboard but need to use the `cloudflared` CLI tool to manage the tunnel and the DNS routing, otherwise you won't get the `credentials.json` file which is required to authenticate the `cloudflared` service.
+Note that you cannot manage this tunnel on the Cloudflare Dashboard. Instead, you need to use the `cloudflared` CLI tool to manage the tunnel and the DNS routing, otherwise you won't get the `credentials.json` file which is required to authenticate the `cloudflared` service.
 
 ### Create the Project from the Template
 
 Create the project from the template with copier and answer the questions. If you forgot the tunnel id, you can find it in the `credentials.json` file or with `cloudflared tunnel list`.
 
-macOS and Linux:
-
 ```bash
-DOCKER_STACKS_DIR="$HOME/docker-stacks"
-copier copy gh:mitja/llamatunnel $DOCKER_STACKS_DIR
+copier copy gh:mitja/llamatunnel .
 ```
 
-Windows:
-
-```powershell
-$DOCKER_STACKS_DIR="$HOME\docker-stacks"
-copier copy gh:mitja/llamatunnel $DOCKER_STACKS_DIR
-```
-
-This will create a new directory in the `DOCKER_STACKS_DIR` with the all the files necessary to run the tunnel.
-
-### Copy the Credentials File to the Data Directory
-
-Create a data directory for cloudflared and copy the credentials file to this data directory. The following example assumes that you have left the data directory at the default location which is `./data` in the project directory. If you have changed the location of the data directory, you need to adjust the path accordingly.
-
-macOS and Linux:
-
-```bash
-DOCKER_STACKS_DIR="$HOME/docker-stacks"
-PROJECT_NAME="testtunnel"
-DATA_DIR="$DOCKER_STACKS_DIR/$PROJECT_NAME/data"
-mkdir -p $DATA_DIR/cloudflared
-cp credentials.json $DATA_DIR/cloudflared/credentials.json
-```
-
-Windows:
-
-```powershell
-$DOCKER_STACKS_DIR="$HOME\docker-stacks"
-$PROJECT_NAME="testtunnel"
-$DATA_DIR="$DOCKER_STACKS_DIR\$PROJECT_NAME\data"
-mkdir -p $DATA_DIR\cloudflared
-cp credentials.json $DATA_DIR\cloudflared\credentials.json
-```
+This will create a new directory in the `STACK_DIR` with the all the files necessary to run the tunnel.
 
 ### Start the Services
 
-Change into the project directory and start the services:
-
-macOS and Linux:
+Change into the project directory and start the services in the foreground:
 
 ```bash
-DOCKER_STACKS_DIR="$HOME/docker-stacks"
-PROJECT_NAME="llamatunnel"
-cd $DOCKER_STACKS_DIR/$PROJECT_NAME
-docker-compose up -d --build
-```
-
-Windows:
-
-```bash
-$DOCKER_STACKS_DIR="$HOME\docker-stacks"
-$PROJECT_NAME="llamatunnel"
-cd $DOCKER_STACKS_DIR\$PROJECT_NAME
-docker-compose up -d --build
+docker-compose up --build
 ```
 
 Now you can use Ollama at `https://api.example.com` and OpenWebUI `https://app.example.com` (assuming you use app and api as subdomains). You can find the API key for Ollama in the `.env` file.
 
-It is best practice to commit the project to git. In fact, this is even required, 
-if you want to use the update feature. You can do this with the following commands:
+### Commit the Project to Git
 
-Create a `.gitignore` file with the following content:
-
-```
-data/*
-!data/.gitkeep
-.env
-```
-
-Then initialize a git repository and commit the files:
+You need to keep this project in git if you want to use the update feature.
+This is how you can do it locallly:
 
 ```bash
 git init
 git add .
 git commit -m "Initial commit"
+```
+
+## Usage
+
+### Start in Detached Mode
+
+```bash
+docker-compose up --build -d
+```
+
+### Stop
+
+```bash
+docker-compose down
+```
+
+### Update
+
+Take a backup, gather the existing secret configurations (you can find the in the `.env` file) and then run, and provide the same answers for the secrets, as before if you want to keep them. You can just acknowledge
+the other options.
+
+```bash
+copier update
 ```
 
 ## Security Notes
@@ -168,50 +183,44 @@ somewhere secure, so that you can enter them again on updates or reinstalls.
 The `data` directory also contains secrets, for example the `credentials.json` file and the private key
 of the TLS certificate. Take backups of the data directory, and don't commit it to version control.
 
-If you found a security issue, please follow GitHub's general instructions to [privately report a security vulnerability](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability).
+If you think you've found a security issue, please follow GitHub's general instructions to [privately report a security vulnerability](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability).
 
 ## Solution Overview
 
 This project uses **Docker Compose** to start cloudflared, Caddy, and OpenWebUI and **Cloudflare Tunnels** to route traffic from the internet to Ollama and OpenWebUI on your local machine.
 
-By default,
+### DNS
 
 - api.example.com points to your local Ollama (which should already be installed on your machine)
 - app.example.com points to your local OpenWebUI
 
-Cloudflared:
+### Cloudflared
 
 - Creates an outbound-only connection to Cloudflare’s global network.
 - Forwards traffic only to the local Caddy service. Ollama and OpenWebUI are not directly exposed to the internet.
 
-Caddy:
+### Caddy
 
 - Acts as a reverse proxy.
 - Protects the Ollama API with a configurable API key.
 - Serves on https with SSL certificates for the same domain name. Thus, you can use a local DNS server to access the services from your local network without going over the internet.
 
-OpenWebUI:
+### OpenWebUI
 
 - Is a chat app that uses the OpenAI API to create a chat experience.
 - Directly talks to the local Ollama, without going over the internet or Caddy.
 
-Ollama:
+### Ollama
 
 - Uses llama.cpp to run large language models on your local machine and expose them with an OpenAI compatible API.
 - Should already be installed directly on your machine and listen on http://localhost:11434 (the default configuration).
 
-Docker Compose:
+### Docker Compose
 
 - Manages multiple Docker containers in a single yaml file andå with a single command.
 - Encapsulates the services in a user-defined network, so that they can communicate with each other over an internal DNS.
 - Maps the ports of the Caddy and OpenWebUI services to the host system, so that you can also access the services from your local machine or your local network.
 - Requires that Docker Desktop or something similar is installed on your machine.
-
-After setup, you can start the services with
-
-```bash
-docker-compose up -d --build
-```
 
 ## FAQ
 

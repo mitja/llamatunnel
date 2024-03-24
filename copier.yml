@@ -84,9 +84,6 @@ network_name:
 # configurations
 _exclude:
   - docs
-  - README.md
-  - .gitignore
-  - LICENSE
   - copier.yaml
   - copier.yml
   - ~*
