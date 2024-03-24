@@ -138,7 +138,18 @@ cd $DOCKER_STACKS_DIR\$PROJECT_NAME
 docker-compose up -d --build
 ```
 
-Now you can use Ollama at `https://api.example.com` and OpenWebUI `https://app.example.com` (assuming you use app and api as subdomains).
+Now you can use Ollama at `https://api.example.com` and OpenWebUI `https://app.example.com` (assuming you use app and api as subdomains). You can find the API key for Ollama in the `.env` file.
+
+## Security Notes
+
+The `.env` file contains secrets, namely the `CLOUDFLARE_API_TOKEN`, the `OLLAMA_API_KEY`,
+and the `WEBUI_SECRET_KEY`. Don't commit the `.env` file to version control and store the secrets
+somewhere secure, so that you can enter them again on updates or reinstalls.
+
+The `data` directory also contains secrets, for example the `credentials.json` file and the private key
+of the TLS certificate. Take backups of the data directory, and don't commit it to version control.
+
+If you found a security issue, please follow GitHub's general instructions to [privately report a security vulnerability](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability).
 
 ## Solution Overview
 
@@ -266,10 +277,6 @@ You can set a verbose log level and run tunnels with test commands. See the Clou
 ### How Can I Contribute or Give Feedback?
 
 If you have any questions, suggestions, or improvements, feel free to open an issue or a pull request.
-
-### How Can I Raise as Security Issue?
-
-Please follow GitHub's general instructions to [privately report a security vulnerability](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability).
 
 ## License
 

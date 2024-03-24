@@ -99,8 +99,3 @@ _exclude:
   - .git
   - .DS_Store
   - .svn"
-
-_migrations:
-  - version: "0.1"
-    after:
-      - echo "The Ollama API key is {{ollama_api_key}}"
