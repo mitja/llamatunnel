@@ -80,14 +80,14 @@ macOS and Linux:
 
 ```bash
 DOCKER_STACKS_DIR="$HOME/docker-stacks"
-copier gh:mitja/llamatunnel $DOCKER_STACKS_DIR
+copier copy gh:mitja/llamatunnel $DOCKER_STACKS_DIR
 ```
 
 Windows:
 
 ```powershell
 $DOCKER_STACKS_DIR="$HOME\docker-stacks"
-copier gh:mitja/llamatunnel $DOCKER_STACKS_DIR
+copier copy gh:mitja/llamatunnel $DOCKER_STACKS_DIR
 ```
 
 This will create a new directory in the `DOCKER_STACKS_DIR` with the all the files necessary to run the tunnel.
