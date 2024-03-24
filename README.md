@@ -109,12 +109,12 @@ cloudflared tunnel route dns $TUNNEL_NAME $APP_SUBDOMAIN.$DOMAIN_NAME
 Windows:
 
 ```powershell
-$TUNNEL_NAME="llamatunnel"
-$DOMAIN_NAME="example.com"
-$API_SUBDOMAIN="api"
-$APP_SUBDOMAIN="app"
-cloudflared tunnel create --credentials-file .\data\cloudflared\credentials.json $TUNNEL_NAME
-cloudflared tunnel route dns $TUNNEL_NAME $API_SUBDOMAIN.$DOMAIN_NAME
+$TUNNEL_NAME="llamatunnel" `
+$DOMAIN_NAME="example.com" `
+$API_SUBDOMAIN="api" `
+$APP_SUBDOMAIN="app" `
+cloudflared tunnel create --credentials-file .\data\cloudflared\credentials.json $TUNNEL_NAME `
+cloudflared tunnel route dns $TUNNEL_NAME $API_SUBDOMAIN.$DOMAIN_NAME `
 cloudflared tunnel route dns $TUNNEL_NAME $APP_SUBDOMAIN.$DOMAIN_NAME
 ```
 
