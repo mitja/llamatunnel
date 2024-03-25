@@ -35,7 +35,9 @@ services:
       - DOMAIN_NAME=${DOMAIN_NAME}
       - API_SUBDOMAIN=${API_SUBDOMAIN}
       - APP_SUBDOMAIN=${APP_SUBDOMAIN}
+      - OLLAMA_URL=${OLLAMA_URL}
       - OLLAMA_API_KEY=${OLLAMA_API_KEY}
+      - WEBUI_SERVICE_NAME=${WEBUI_SERVICE_NAME}
     volumes:
       - ./conf/caddy/Caddyfile:/etc/caddy/Caddyfile
       - ./conf/caddy/401.json:/srv/401.json
