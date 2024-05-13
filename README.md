@@ -6,9 +6,7 @@ With Llama Tunnel, you can publish your local LLM APIs and apps on the internet 
 
 The services are also published locally with TLS certificates for the same domain name. When you configure a local DNS server to resolve the domain name to the local IP address of the machine running the services, you can use the services at home within your local network without changing the domain name.
 
-Learn how you can set it up on Youtube:
-
-[![Publish Ollama and OpenWebUI on the Internet with Cloudflare Tunnels](https://img.youtube.com/vi/-kmrfrL8W2Q/0.jpg)](https://www.youtube.com/watch?v=-kmrfrL8W2Q)
+Learn how to set it up on Youtube: [Publish Ollama and OpenWebUI on the Internet with Cloudflare Tunnels](https://www.youtube.com/watch?v=-kmrfrL8W2Q)
 
 **It's a Docker Compose Stack.**
 
