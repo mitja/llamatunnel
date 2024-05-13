@@ -6,6 +6,10 @@ With Llama Tunnel, you can publish your local LLM APIs and apps on the internet 
 
 The services are also published locally with TLS certificates for the same domain name. When you configure a local DNS server to resolve the domain name to the local IP address of the machine running the services, you can use the services at home within your local network without changing the domain name.
 
+Learn how you can set it up on Youtube:
+
+[![Publish Ollama and OpenWebUI on the Internet with Cloudflare Tunnels](https://img.youtube.com/vi/-kmrfrL8W2Q/0.jpg)](https://www.youtube.com/watch?v=-kmrfrL8W2Q)
+
 **It's a Docker Compose Stack.**
 
 If you don't see a `copier.yml` here, then this is the actual Docker Compose stack that
@@ -148,8 +152,7 @@ Now you can use Ollama at `https://api.example.com` and OpenWebUI `https://app.e
 
 ### Commit the Project to Git
 
-You need to keep this project in git if you want to use the update feature.
-This is how you can do it locallly:
+You need to keep this project in git if you want to use the [update feature of copier](https://copier.readthedocs.io/en/stable/updating/). See below for more info abut this. This is how you can do it locally:
 
 ```bash
 git init
@@ -213,7 +216,7 @@ If you think you've found a security issue, please follow GitHub's general instr
 
 ## Solution Overview
 
-This project uses **Docker Compose** to start cloudflared, Caddy, and OpenWebUI and **Cloudflare Tunnels** to route traffic from the internet to Ollama and OpenWebUI on your local machine.
+This project uses **Docker Compose** to start cloudflared, Caddy, and OpenWebUI and **Cloudflare Tunnels** to route traffic from certain domains on the internet to Ollama and OpenWebUI on your local machine.
 
 ### DNS
 
@@ -260,13 +263,15 @@ In principle, you can publish your local services on the internet in three diffe
 | Open ports with Dynamic DNS | Easy to set up, no need for a VPN | you need to open ports on your router, needs additional security measures in your network, could be blocked by your internet service provider |
 | Outbound tunnel to a gateway service on the internet | no need to open ports on your home network, can be shared with friends without handing out VPN access to your network, you can authenticate/authorize outside of your network | you need a service on the internet |
 
-An outbound tunnel is a great compromise between security, convenience, and shareability.
+An outbound tunnel is a good compromise between security, convenience, and shareability.
 
-[Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) is just one of many services you can use for outbound tunnels. The benefit is that it's free if you already have a domain you can use for this. The main drawbacks of Cloudflare Tunnels are the complex setup, and some limitations of the service. Also, it would be more secure to perform pre-authentication of API clients and users outside of your network. Cloudflare supports this with the Zero Trust Access service, but this can get quite expensive.
+[Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) is just one of many services you can use for outbound tunnels. The benefit is that it's free if you already have a domain you can use for this purpose. The main drawbacks of Cloudflare Tunnels are the complex setup, and some limitations of the service.
+
+It would be more secure to perform pre-authentication of API clients and users outside of your network. Cloudflare supports this with the Zero Trust Access service, but this can get quite expensive.
 
 ### Why Do You Install cloudflared as CLI Tool?
 
-I use cloudflared as cli tool for administrative tasks and not run them in the docker container defined in docker-compose.yaml. This way, I don't need to make the admin credentials available to the cloudflared service.
+I use cloudflared as cli tool for administrative tasks and don't run them in the docker container defined in docker-compose.yaml. This way, I don't need to make my Cloudflare admin credentials available to the cloudflared service.
 
 ### What if I have a Firewall?
 
@@ -274,7 +279,11 @@ If you have a firewall, you need to allow outbound connections to the Cloudflare
 
 ### Why and How Do You Build a Custom Docker Image for Caddy?
 
-The custom Caddy image adds the Cloudflare module for the DNS challenge to Caddy which is not built into Caddy by default. Creating a custom Caddy binary and package it in an image can be done with a Docker [Multi-stage build](https://docs.docker.com/build/building/multi-stage/):
+The custom Caddy image adds the Cloudflare module for the DNS challenge to Caddy which is not built into Caddy by default. 
+
+Caddy uses the DNS challenge to create TLS certificates with Let's Encrypt for the public domains. Trusted TLS certificates for this domain are now both on Cloudflare and Caddy. This way, you can use the services on your local network at same domain name. You just need to configure your local DNS server to point them to the machine Caddy is running on. 
+
+Creating a custom Caddy binary and package it in an image can be done with a Docker [Multi-stage build](https://docs.docker.com/build/building/multi-stage/):
 
 - The first stage uses Caddy's builder image and runs the `xcaddy` command to build caddy with the Cloudflare module.
 - The second stage create a new image and copies the resulting binary from the builder into it.
@@ -294,9 +303,9 @@ If you want to learn more about this, You can find a description of the procedur
 
 I use Visual Studio Code with the [Caddyfile Support](https://marketplace.visualstudio.com/items?itemName=matthewpi.caddyfile-support) extension for Visual Studio Code to get syntax highlighting, suggestions, and documentation hints for Caddyfiles.
 
-### Can I Publish the Services Deeper Level Subdomain like ollama.home.example.com?
+### Can I Publish the Services on Deeper Level Subdomain like ollama.home.example.com?
 
-If you want to proxy a wildcard DNS record on a deeper level like `*.local.example.com` you can subscribe to [Cloudflare Advanced Certificate Manager](https://developers.cloudflare.com/ssl/edge-certificates/advanced-certificate-manager/). For more information, see the Cloudflare Blog post [Wildcard proxy for everyone](https://blog.cloudflare.com/wildcard-proxy-for-everyone) by Hannes Gerhart.
+This is possible, but you need a paid feature from Cloudflare. If you want to proxy a wildcard DNS record on a deeper level like `*.local.example.com` you can subscribe to [Cloudflare Advanced Certificate Manager](https://developers.cloudflare.com/ssl/edge-certificates/advanced-certificate-manager/). For more information, see the Cloudflare Blog post [Wildcard proxy for everyone](https://blog.cloudflare.com/wildcard-proxy-for-everyone) by Hannes Gerhart.
 
 ### How Can I Add Monitoring and Logging?
 
@@ -320,7 +329,7 @@ If you don't want to use the services locally with the same domain name, you can
 
 While you can theoretically use the `--region` option to specify the region to which the tunnel connects, the only available value is `us` which routes all connections through data centers in the United States. 
 
-When you omit this option or leave it empty you connect to the global region. So in effect, you cannot control in which region to run the tunnels, except for the global region or the us region.
+When you don't select this option or leave it empty you will connect to Cloudflare's global region. Thus, in effect, you cannot control in which region your tunnel will run, except for the global region or the us region.
 
 Reference: [Cloudflare Tunnel Run Parameters](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/configure-tunnels/tunnel-run-parameters/#region)
 
