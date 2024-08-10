@@ -1,6 +1,7 @@
-
 docs/.DS_Store
 .DS_Store
 data/*
 !data/.gitkeep
+data/cloudflared/*
+!data/cloudflared/.gitkeep
 .env

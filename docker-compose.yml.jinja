@@ -1,59 +1,64 @@
 version: '3'
 
 networks:
-  web:
+  {{network_name}}:
     driver: bridge
 
 services:
   #--- OpenWebUI  ---
-  open-webui:
+  {{webui_service_name}}:
     image: ghcr.io/open-webui/open-webui:main
     restart: unless-stopped
-    container_name: open-webui
     environment:
       - OLLAMA_API_BASE_URL=http://host.docker.internal:11434/api
       - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
     volumes:
       - ${DATA_DIR-./data}/open-webui:/app/backend/data
+    {% if webui_port %}
     ports:
-      - ${OPEN_WEBUI_PORT-3000}:8080
+      - ${WEBUI_PORT-3000}:8080
+    {% endif %}
     networks:
-      - web
+      - {{network_name}}
     extra_hosts:
       - "host.docker.internal:host-gateway"
   #--- Caddy ---
-  caddy:
+  {{caddy_service_name}}:
     build:
       context: ./images/caddy
       dockerfile: ./Dockerfile
     restart: unless-stopped
     depends_on:
-      - open-webui
+      - {{webui_service_name}}
     environment:
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
       - DOMAIN_NAME=${DOMAIN_NAME}
       - API_SUBDOMAIN=${API_SUBDOMAIN}
       - APP_SUBDOMAIN=${APP_SUBDOMAIN}
+      - OLLAMA_URL=${OLLAMA_URL}
       - OLLAMA_API_KEY=${OLLAMA_API_KEY}
+      - WEBUI_SERVICE_NAME=${WEBUI_SERVICE_NAME}
     volumes:
       - ./conf/caddy/Caddyfile:/etc/caddy/Caddyfile
       - ./conf/caddy/401.json:/srv/401.json
       - ${DATA_DIR-./data}/caddy:/data/caddy
+    {% if publish_locally %}
     ports:
       - "443:443"
+    {% endif %}
     networks:
-      - web
+      - {{network_name}}
     extra_hosts:
       - "host.docker.internal:host-gateway"
   #--- Cloudflared ---
-  cloudflared:
+  {{cloudflared_service_name}}:
     image: cloudflare/cloudflared
     restart: unless-stopped
     depends_on:
-      - caddy
+      - {{caddy_service_name}}
     volumes:
       - ./conf/cloudflared/config.yaml:/etc/cloudflared/config.yml
       - ${DATA_DIR-./data}/cloudflared/credentials.json:/etc/cloudflared/credentials.json
     command: tunnel --config /etc/cloudflared/config.yml run #--loglevel debug run
     networks:
-      - web
+      - {{network_name}}

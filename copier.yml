@@ -1,0 +1,95 @@
+# questions
+
+data_dir:
+    type: str
+    help: Where should the data be stored?
+    default: ./data
+
+domain_name:
+    type: str
+    help: On which domain do you want to publish the services?
+
+api_subdomain:
+    type: str
+    help: What is the API subdomain?
+    default: api
+
+app_subdomain:
+    type: str
+    help: What is the app subdomain?
+    default: app
+
+cloudflare_api_token:
+    type: str
+    secret: true
+    default: ""
+    help: Provide a Cloudflare API token with permission to configure the domain in the DNS service?
+
+tunnel_name:
+    type: str
+    help: What is your Cloudflare Tunnel name?
+    default: llamatunnel
+
+tunnel_id:
+    type: str
+    help: What is your Cloudflare Tunnel ID?
+
+ollama_api_key:
+    type: str
+    help: What is your Ollama API key?
+    secret: true
+    default: "{{ 999999999999999999999999999999999|ans_random|hash('sha256')|urlencode }}"
+
+ollama_url:
+    type: str
+    help: What is the local URL of the Ollama API?
+    default: "host.docker.internal:11434"
+
+cloudflared_service_name:
+    type: str
+    help: What is the name of the Cloudflared service?
+    default: cloudflared
+
+caddy_service_name:
+    type: str
+    help: What is the name of the Caddy service?
+    default: caddy
+
+webui_service_name:
+    type: str
+    help: What is the name of the OpenWebUI service?
+    default: openwebui
+
+webui_port:
+    type: int
+    help: On which port shall OpenWebUI listen (0 means openwebui is not exposed, directly)?
+    default: 3200
+
+webui_secret_key:
+    type: str
+    help: What is the secret key for the OpenWebUI?
+    secret: true
+    default: "{{ 999999999999999999999999999999999|ans_random|hash('sha256')|urlencode }}"
+
+publish_locally:
+    type: bool
+    help: Do you want to publish the tunnel locally on port 443?
+    default: true
+
+network_name:
+    type: str
+    help: What is the name of the docker network?
+    default: llamatunnel
+
+# configurations
+_exclude:
+  - docs
+  - copier.yaml
+  - copier.yml
+  - ~*
+  - "*.py[co]"
+  - __pycache__
+  - .git
+  - .DS_Store
+  - .svn"
+  - data
