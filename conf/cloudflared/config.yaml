@@ -1,0 +1,15 @@
+tunnel: mitjasllamatunnel
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  - hostname: 'app.mitja.dev'
+    service: https://caddy:443
+    originRequest:
+      originServerName: '*.mitja.dev'
+      # noTLSVerify: true
+      # disableChunkedEncoding: true
+  - hostname: 'api.mitja.dev'
+    service: https://caddy:443
+    originRequest:
+      originServerName: '*.mitja.dev'
+  - service: http_status:404 # default service

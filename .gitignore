@@ -3,3 +3,4 @@ docs/.DS_Store
 .DS_Store
 data/*
 !data/.gitkeep
+.env
