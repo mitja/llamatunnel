@@ -6,7 +6,7 @@ With Llama Tunnel, you can publish your local LLM APIs and apps on the internet 
 
 The services are also published locally with TLS certificates for the same domain name. When you configure a local DNS server to resolve the domain name to the local IP address of the machine running the services, you can use the services at home within your local network without changing the domain name.
 
-Learn how to set it up on Youtube: [Publish Ollama and OpenWebUI on the Internet with Cloudflare Tunnels](https://www.youtube.com/watch?v=-kmrfrL8W2Q)
+Learn how to set it up on Youtube: [Publish Ollama and OpenWebUI on the Internet with Cloudflare Tunnels](https://www.youtube.com/watch?v=-kmrfrL8W2Q). Note: This video is still based on pipx, instead of uv.
 
 **It's a Docker Compose Stack.**
 
@@ -31,32 +31,13 @@ To learn how to set up the stack, please read the [Installation](#installation) 
 
 ### Install Copier
 
-On Linux:
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) first, then install copier:
 
 ```bash
-python3 -m pip install --user pipx
-python3 -m pipx ensurepath
-pipx install copier
+uv tool install copier
 ```
 
-On macOS:
-
-```bash
-brew install pipx
-pipx install copier
-```
-
-On Windows:
-
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -scope CurrentUser
-Invoke-RestMethod -Uri "https://get.scoop.sh" | Invoke-Expression
-scoop install pipx
-pipx install copier
-```
-
-Note that you probably need to start another terminal after installing
-pipx to make the `pipx` command available.
+This works on all platforms (Linux, macOS, Windows) and is much simpler than the previous pipx approach.
 
 ### Create a Cloudflare API Token
 
@@ -289,9 +270,9 @@ Creating a custom Caddy binary and package it in an image can be done with a Doc
 Here is the Dockerfile, you can find it in  `./images/caddy/Dockerfile`:
 
 ```Dockerfile
-FROM caddy:2.7.6-builder AS builder
+FROM caddy:2.10.0-builder AS builder
 RUN xcaddy build --with github.com/caddy-dns/cloudflare
-FROM caddy:2.7.6
+FROM caddy:2.10.0
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 ```
 
